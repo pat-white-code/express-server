@@ -1,5 +1,7 @@
-import {} from 'dotenv/config'
-import {v2 as cloudinary} from 'cloudinary';
+// import {} from 'dotenv/config'
+require('dotenv').config()
+const cloudinary = require('cloudinary').v2
+// import {v2 as cloudinary} from 'cloudinary';
 
 const initCloudinary = () => {
     cloudinary.config({ 
@@ -10,4 +12,4 @@ const initCloudinary = () => {
     return cloudinary
 }
 
-export default initCloudinary;
+module.exports = initCloudinary

@@ -1,5 +1,5 @@
-import {} from 'dotenv/config'
-import pg from 'pg'
+require('dotenv').config()
+const pg = require("pg");
 
 const config = {
     user: process.env.DB_USER,
@@ -10,44 +10,36 @@ const config = {
     idleTimeoutMillis: 30000,
 };
 
-export const pool = new pg.Pool(config);
+const pool = new pg.Pool(config);
 
-pool.on('connect', () => {
-    console.log('connected to the Database');
+pool.on("connect", () => {
+    console.log("connected to the Database");
 });
 
-export const createTables = () => {
-    const schoolTable = `CREATE TABLE IF NOT EXISTS
-        students(
+const createTables = () => {
+    const imagesTable = `CREATE TABLE IF NOT EXISTS
+        images(
             id SERIAL PRIMARY KEY,
-            student_name VARCHAR(128) NOT NULL,
-            student_age INT NOT NULL,
-            student_class VARCHAR(128) NOT NULL,
-            parent_contact VARCHAR(128) NOT NULL,
-            admission_date VARCHAR(128) NOT NULL
+            title VARCHAR(128) NOT NULL,
+            cloudinary_id VARCHAR(128) NOT NULL,
+            img_url VARCHAR(128) NOT NULL
         )`;
-    const petsTable = `CREATE TABLE IF NOT EXISTS
-        pets(
-            id SERIAL PRIMARY KEY,
-            student_name VARCHAR(128) NOT NULL,
-            student_age INT NOT NULL,
-            student_class VARCHAR(128) NOT NULL,
-            parent_contact VARCHAR(128) NOT NULL,
-            admission_date VARCHAR(128) NOT NULL
-        )`;
-    pool.query(schoolTable)
-    pool.query(petsTable)
+    console.log('creating images table...')
+    pool.query(imagesTable)
         .then((res) => {
-            console.log(res);
-            pool.end();
+            console.log('createTables response', res)
+            pool.end()
         })
         .catch((err) => {
-            console.log(err);
-            pool.end();
-        });
+            console.log('aborting images table...')
+            console.log(err)
+            pool.end()
+        })
 };
 
-pool.on('remove', () => {
-    console.log('client removed');
-    process.exit(0);
-});
+module.exports = {
+    createTables,
+    pool,
+};
+
+require("make-runnable");

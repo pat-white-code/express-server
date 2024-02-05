@@ -1,7 +1,11 @@
-import bodyParser from 'body-parser'
-import express from 'express'
-import initCloudinary from './cloudinary.js'
-import { pool } from './services/db.js'
+// import bodyParser from 'body-parser'
+const bodyParser = require('body-parser')
+// import express from 'express'
+const express = require('express')
+const initCloudinary = require('./cloudinary.js')
+// import initCloudinary from './cloudinary.js'
+const pool = require('./services/db.js').pool
+// import { pool } from './services/db.js'
 
 const cloudinary = initCloudinary();
 
@@ -120,4 +124,4 @@ app.post('/upload-image', async (req, res) => {
     }
 })
 
-export default app;
+module.exports = app
