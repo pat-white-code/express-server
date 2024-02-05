@@ -5,6 +5,7 @@ const express = require('express')
 const initCloudinary = require('./cloudinary.js')
 // import initCloudinary from './cloudinary.js'
 const pool = require('./services/db.js').pool
+// const db = require('services.js');
 // import { pool } from './services/db.js'
 
 const cloudinary = initCloudinary();
@@ -37,6 +38,52 @@ app.get('/students', (req, res) => {
         });
     });
 });
+
+app.post('/persist-image', async (req, res) => {
+    debugger
+    const img = req.body.img
+    const title = req.body.title || ''
+    if (!img) {
+        res.status(400).send({
+            error: 'no image provided'
+        })
+    }
+    try {
+        const cloudinaryRes = await cloudinary.uploader.upload(img)
+        pool.connect(async (err, client) => {
+            debugger
+            const insertQuery = `INSERT INTO images (title, cloudinary_id, image_url) VALUES (
+                $1,$2,$3
+            )
+            RETURNING *
+            `
+            const values = [title, cloudinaryRes.public_id, cloudinaryRes.secure_url]
+            try {
+                const dbRes = await client.query(insertQuery, values)
+                const result = dbRes.rows[0]
+                res.status(201).send({
+                    data: {
+                        message: 'Image Uploaded Successfully',
+                        title,
+                        cloudinary_id: result.cloudinary_id,
+                        image_url: result.image_url,
+                    },
+                    status: 'success',
+                })
+            } catch (error) {
+                res.status(500).send({
+                    message: 'failure',
+                    error,
+                })
+            }
+        })
+    } catch(error) {
+        res.status(400).send({
+            message: 'upload failed',
+            error
+        })
+    }
+})
 
 app.get('/student/:id', (req, res) => {
     pool.connect((error, client, done) => {
