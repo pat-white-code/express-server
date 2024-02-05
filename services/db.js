@@ -1,5 +1,5 @@
-require('dotenv').config()
-const pg = require("pg");
+import { } from 'dotenv/config';
+import pg from 'pg';
 
 const config = {
     user: process.env.DB_USER,
@@ -10,36 +10,8 @@ const config = {
     idleTimeoutMillis: 30000,
 };
 
-const pool = new pg.Pool(config);
+export const pool = new pg.Pool(config);
 
 pool.on("connect", () => {
     console.log("connected to the Database");
 });
-
-const createTables = () => {
-    const imagesTable = `CREATE TABLE IF NOT EXISTS
-        images(
-            id SERIAL PRIMARY KEY,
-            title VARCHAR(128) NOT NULL,
-            cloudinary_id VARCHAR(128) NOT NULL,
-            img_url VARCHAR(128) NOT NULL
-        )`;
-    console.log('creating images table...')
-    pool.query(imagesTable)
-        .then((res) => {
-            console.log('createTables response', res)
-            pool.end()
-        })
-        .catch((err) => {
-            console.log('aborting images table...')
-            console.log(err)
-            pool.end()
-        })
-};
-
-module.exports = {
-    createTables,
-    pool,
-};
-
-require("make-runnable");

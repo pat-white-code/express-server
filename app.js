@@ -1,13 +1,7 @@
-// import bodyParser from 'body-parser'
-"use strict";
-const bodyParser = require('body-parser')
-// import express from 'express'
-const express = require('express')
-const initCloudinary = require('./cloudinary.js')
-// import initCloudinary from './cloudinary.js'
-const pool = require('./services/db.js').pool
-// const db = require('services.js');
-// import { pool } from './services/db.js'
+import bodyParser from 'body-parser'
+import express from 'express'
+import { initCloudinary } from './cloudinary.js'
+import { pool } from './services/db.js'
 
 const cloudinary = initCloudinary();
 
@@ -15,6 +9,7 @@ const app = express();
 
 const createImage = async (pool, { title, cloudinary_id, image_url }) => {
     const client = await pool.connect()
+
     const query = `
             INSERT INTO images (
                 title, 
@@ -26,7 +21,9 @@ const createImage = async (pool, { title, cloudinary_id, image_url }) => {
             )
             RETURNING *
             `
+
     const values = [title, cloudinary_id, image_url]
+
     try {
         const dbResponse = await client.query(query, values)
         return dbResponse
@@ -98,7 +95,6 @@ app.post('/persist-image', async (req, res) => {
 
 app.get('/student/:id', (req, res) => {
     pool.connect((error, client, done) => {
-        debugger
         const id = req.params.id;
 
         const query = `
@@ -151,7 +147,6 @@ app.post('/add-student', (req, res) => {
         const values = [studentName, studentAge, studentClass, parentContact, admissionDate || new Date()]
 
         client.query(query, values, (err, result) => {
-            debugger
             done();
             if (err) {
                 res.status(400).json({ errror: err })
@@ -182,4 +177,4 @@ app.post('/upload-image', async (req, res) => {
     }
 })
 
-module.exports = app
+export default app

@@ -1,7 +1,5 @@
-// import { createServer } from 'http';
-const createServer = require('http').createServer;
-const app = require('./app.js');
-// import app from './app.js';
+import { createServer } from 'http';
+import app from './app.js';
 
 const normalizePort = val => {
   const port = parseInt(val, 10);

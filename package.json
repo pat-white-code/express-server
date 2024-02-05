@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "create": "node ./services/db createTables",
+    "create": "node ./services/createTables.js",
     "start:inspect": "nodemon --inspect index",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,6 +19,9 @@
     "pg": "^8.11.3"
   },
   "devDependencies": {
+    "@types/body-parser": "^1.19.5",
+    "@types/pg": "^8.11.0",
     "nodemon": "^3.0.3"
-  }
+  },
+  "type": "module"
 }

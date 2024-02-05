@@ -1,9 +1,7 @@
-// import {} from 'dotenv/config'
-require('dotenv').config()
-const cloudinary = require('cloudinary').v2
-// import {v2 as cloudinary} from 'cloudinary';
+import {} from 'dotenv/config'
+import {v2 as cloudinary} from 'cloudinary';
 
-const initCloudinary = () => {
+export const initCloudinary = () => {
     cloudinary.config({ 
         cloud_name: process.env.CLOUD_NAME,
         api_key: process.env.API_KEY,
@@ -11,5 +9,3 @@ const initCloudinary = () => {
     });
     return cloudinary
 }
-
-module.exports = initCloudinary
