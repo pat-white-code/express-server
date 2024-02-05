@@ -1,4 +1,5 @@
 // import bodyParser from 'body-parser'
+"use strict";
 const bodyParser = require('body-parser')
 // import express from 'express'
 const express = require('express')
@@ -11,6 +12,28 @@ const pool = require('./services/db.js').pool
 const cloudinary = initCloudinary();
 
 const app = express();
+
+const createImage = async (pool, { title, cloudinary_id, image_url }) => {
+    const client = await pool.connect()
+    const query = `
+            INSERT INTO images (
+                title, 
+                cloudinary_id, 
+                image_url
+            ) 
+            VALUES (
+                $1,$2,$3
+            )
+            RETURNING *
+            `
+    const values = [title, cloudinary_id, image_url]
+    try {
+        const dbResponse = await client.query(query, values)
+        return dbResponse
+    } catch (error) {
+        return error
+    }
+}
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -40,7 +63,6 @@ app.get('/students', (req, res) => {
 });
 
 app.post('/persist-image', async (req, res) => {
-    debugger
     const img = req.body.img
     const title = req.body.title || ''
     if (!img) {
@@ -50,34 +72,23 @@ app.post('/persist-image', async (req, res) => {
     }
     try {
         const cloudinaryRes = await cloudinary.uploader.upload(img)
-        pool.connect(async (err, client) => {
-            debugger
-            const insertQuery = `INSERT INTO images (title, cloudinary_id, image_url) VALUES (
-                $1,$2,$3
-            )
-            RETURNING *
-            `
-            const values = [title, cloudinaryRes.public_id, cloudinaryRes.secure_url]
-            try {
-                const dbRes = await client.query(insertQuery, values)
-                const result = dbRes.rows[0]
-                res.status(201).send({
-                    data: {
-                        message: 'Image Uploaded Successfully',
-                        title,
-                        cloudinary_id: result.cloudinary_id,
-                        image_url: result.image_url,
-                    },
-                    status: 'success',
-                })
-            } catch (error) {
-                res.status(500).send({
-                    message: 'failure',
-                    error,
-                })
-            }
+        const cloudinary_id = cloudinaryRes.public_id
+        const image_url = cloudinaryRes.secure_url
+
+        const result = await createImage(pool, { title, image_url, cloudinary_id })
+        const row = result.rows[0]
+
+        const data = {
+            img_url: row.image_url,
+            title: row.title,
+            cloudinary_id: row.cloudinary_id
+        }
+
+        res.status(201).send({
+            message: 'success',
+            data
         })
-    } catch(error) {
+    } catch (error) {
         res.status(400).send({
             message: 'upload failed',
             error
