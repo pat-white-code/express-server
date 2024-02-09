@@ -1,5 +1,4 @@
-// const pool = require('./db').pool
-import { pool } from './db'
+import { pool } from './db.js'
 
 const imagesTable = `CREATE TABLE IF NOT EXISTS
     images(

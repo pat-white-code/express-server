@@ -2,35 +2,11 @@ import bodyParser from 'body-parser'
 import express from 'express'
 import { initCloudinary } from './cloudinary.js'
 import { pool } from './services/db.js'
+import persistImage from './routes/persist-image.js'
 
 const cloudinary = initCloudinary();
 
 const app = express();
-
-const createImage = async (pool, { title, cloudinary_id, image_url }) => {
-    const client = await pool.connect()
-
-    const query = `
-            INSERT INTO images (
-                title, 
-                cloudinary_id, 
-                image_url
-            ) 
-            VALUES (
-                $1,$2,$3
-            )
-            RETURNING *
-            `
-
-    const values = [title, cloudinary_id, image_url]
-
-    try {
-        const dbResponse = await client.query(query, values)
-        return dbResponse
-    } catch (error) {
-        return error
-    }
-}
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -59,39 +35,41 @@ app.get('/students', (req, res) => {
     });
 });
 
-app.post('/persist-image', async (req, res) => {
-    const img = req.body.img
-    const title = req.body.title || ''
-    if (!img) {
-        res.status(400).send({
-            error: 'no image provided'
-        })
-    }
-    try {
-        const cloudinaryRes = await cloudinary.uploader.upload(img)
-        const cloudinary_id = cloudinaryRes.public_id
-        const image_url = cloudinaryRes.secure_url
+persistImage(app)
 
-        const result = await createImage(pool, { title, image_url, cloudinary_id })
-        const row = result.rows[0]
+// app.post('/persist-image', async (req, res) => {
+//     const img = req.body.img
+//     const title = req.body.title || ''
+//     if (!img) {
+//         res.status(400).send({
+//             error: 'no image provided'
+//         })
+//     }
+//     try {
+//         const cloudinaryRes = await cloudinary.uploader.upload(img)
+//         const cloudinary_id = cloudinaryRes.public_id
+//         const image_url = cloudinaryRes.secure_url
 
-        const data = {
-            img_url: row.image_url,
-            title: row.title,
-            cloudinary_id: row.cloudinary_id
-        }
+//         const result = await createImage(pool, { title, image_url, cloudinary_id })
+//         const row = result.rows[0]
 
-        res.status(201).send({
-            message: 'success',
-            data
-        })
-    } catch (error) {
-        res.status(400).send({
-            message: 'upload failed',
-            error
-        })
-    }
-})
+//         const data = {
+//             img_url: row.image_url,
+//             title: row.title,
+//             cloudinary_id: row.cloudinary_id
+//         }
+
+//         res.status(201).send({
+//             message: 'success',
+//             data
+//         })
+//     } catch (error) {
+//         res.status(400).send({
+//             message: 'upload failed',
+//             error
+//         })
+//     }
+// })
 
 app.get('/student/:id', (req, res) => {
     pool.connect((error, client, done) => {
