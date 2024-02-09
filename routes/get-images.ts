@@ -1,7 +1,9 @@
 import { pool } from '../services/db.js'
-import selectAllImages from '../services/controllers/getImages.js';
+import { Request, Response } from 'express'
+import { Express } from 'express-serve-static-core'
+import selectAllImages from '../controllers/getImages.js';
 
-const handleGetImages = async (req, res) => {
+const handleGetImages = async (req: Request, res: Response) => {
     try {
         const result = await selectAllImages(pool)
         const rows = result.rows
@@ -20,7 +22,7 @@ const handleGetImages = async (req, res) => {
     }
 }
 
-const getImages = app => {
+const getImages = (app: Express) => {
     return app.get('/images', handleGetImages)}
 
 export default getImages
