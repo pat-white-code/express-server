@@ -1,11 +1,14 @@
+import { Express } from 'express'
 import { initCloudinary } from '../cloudinary.js'
-import { pool } from '../services/db.js'
-import createImage from '../services/controllers/createImage.js'
+import { pool } from '../services/db'
+import createImage from '../controllers/createImage.js'
+import { Request, Response } from 'express'
+import { DbResponse } from '../controllers/createImage.js'
 
 const cloudinary = initCloudinary();
 
 
-const persistImageHandler = async (req, res) => {
+const persistImageHandler = async (req: Request, res: Response) => {
     const img = req.body.img
     const title = req.body.title || ''
     if (!img) {
@@ -19,6 +22,9 @@ const persistImageHandler = async (req, res) => {
         const image_url = cloudinaryRes.secure_url
 
         const result = await createImage(pool, { title, image_url, cloudinary_id })
+        // if (!result) {
+        //     return
+        // }
         const row = result.rows[0]
 
         const data = {
@@ -39,7 +45,7 @@ const persistImageHandler = async (req, res) => {
     }
 }
 
-const persistImage = app => {
+const persistImage = (app: Express) => {
     return app.post('/persist-image', persistImageHandler)}
 
 export default persistImage

@@ -1,4 +1,6 @@
-const getImages = async pool => {
+import { Pool } from "pg"
+
+const getImages = async (pool: Pool) => {
     const client = await pool.connect()
 
     const query = `SELECT * FROM images`
@@ -7,7 +9,7 @@ const getImages = async pool => {
         const dbResponse = await client.query(query)
         return dbResponse
     } catch (error) {
-        return error
+        throw new Error()
     }
 }
 
