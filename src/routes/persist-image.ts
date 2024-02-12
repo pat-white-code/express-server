@@ -1,9 +1,8 @@
 import { Express } from 'express'
 import { initCloudinary } from '../cloudinary.js'
-import { pool } from '../services/db'
+import { pool } from '../services/db.js'
 import createImage from '../controllers/createImage.js'
 import { Request, Response } from 'express'
-import { DbResponse } from '../controllers/createImage.js'
 
 const cloudinary = initCloudinary();
 

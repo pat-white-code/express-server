@@ -1,7 +1,7 @@
-import { pool } from '../services/db.js'
+import { pool } from '../services/db'
 import { Request, Response } from 'express'
 import { Express } from 'express-serve-static-core'
-import selectAllImages from '../controllers/getImages.js';
+import selectAllImages from '../controllers/getImages';
 
 const handleGetImages = async (req: Request, res: Response) => {
     try {
