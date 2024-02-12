@@ -1,4 +1,4 @@
-import { } from 'dotenv/config';
+import 'dotenv/config';
 import pg from 'pg';
 
 const config = {

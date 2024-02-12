@@ -1,4 +1,4 @@
-import { Express } from 'express'
+import { Application } from 'express'
 import { initCloudinary } from '../cloudinary.js'
 import { pool } from '../services/db.js'
 import createImage from '../controllers/createImage.js'
@@ -44,7 +44,7 @@ const persistImageHandler = async (req: Request, res: Response) => {
     }
 }
 
-const persistImage = (app: Express) => {
+const persistImage = (app: Application) => {
     return app.post('/persist-image', persistImageHandler)}
 
 export default persistImage

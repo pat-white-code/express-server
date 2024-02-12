@@ -1,4 +1,4 @@
-import {} from 'dotenv/config'
+import 'dotenv/config'
 import {v2 as cloudinary} from 'cloudinary';
 
 export const initCloudinary = () => {

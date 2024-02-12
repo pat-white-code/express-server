@@ -1,9 +1,9 @@
 import bodyParser from 'body-parser'
-import express from 'express'
+import express, { Application } from 'express'
 import persistImage from './routes/persist-image.js'
 import getImages from './routes/get-images.js'
 
-const app = express();
+const app: Application = express();
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
