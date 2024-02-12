@@ -1,5 +1,5 @@
-import { } from 'dotenv/config';
-import { Pool } from 'pg';
+import 'dotenv/config';
+import pg from 'pg';
 
 const config = {
     user: process.env.DB_USER,
@@ -10,8 +10,8 @@ const config = {
     idleTimeoutMillis: 30000,
 };
 
-export const pool = new Pool(config);
+export const pool = new pg.Pool(config);
 
 pool.on("connect", () => {
-    console.log("connected to the Database");
+    console.log("connected to the Database"); // tslint:disable-line:no-console
 });
