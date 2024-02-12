@@ -1,7 +1,7 @@
 import bodyParser from 'body-parser'
 import express from 'express'
-import persistImage from './routes/persist-image'
-import getImages from './routes/get-images'
+import persistImage from './routes/persist-image.js'
+import getImages from './routes/get-images.js'
 
 const app = express();
 

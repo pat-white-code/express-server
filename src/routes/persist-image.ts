@@ -17,8 +17,8 @@ const persistImageHandler = async (req: Request, res: Response) => {
     }
     try {
         const cloudinaryRes = await cloudinary.uploader.upload(img)
-        const cloudinary_id = cloudinaryRes.public_id
-        const image_url = cloudinaryRes.secure_url
+        const cloudinary_id = cloudinaryRes.public_id // tslint:disable-line:variable-name
+        const image_url = cloudinaryRes.secure_url // tslint:disable-line:variable-name
 
         const result = await createImage(pool, { title, image_url, cloudinary_id })
         // if (!result) {

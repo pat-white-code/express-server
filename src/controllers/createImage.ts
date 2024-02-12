@@ -22,10 +22,10 @@ const createImage = async (pool: Pool, { title, cloudinary_id, image_url }: Crea
 
     const query: string = `
             INSERT INTO images (
-                title, 
-                cloudinary_id, 
+                title,
+                cloudinary_id,
                 image_url
-            ) 
+            )
             VALUES (
                 $1,$2,$3
             )
